@@ -172,7 +172,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder().setCustomId("p_sign_agreement").setLabel("Sign Agreement").setStyle(ButtonStyle.Success).setEmoji("✍️")
       );
-      await interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
+      await interaction.reply({ embeds: [embed], components: [row], ephemeral: false });
     }
     return;
   }
