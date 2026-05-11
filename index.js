@@ -28,12 +28,16 @@ const LOG_FILE = path.join(DATA_DIR, "message-log.json");
 const AGREEMENTS_FILE = path.join(DATA_DIR, "agreements.json");
 
 const AGREEMENT_TEXT =
-  `**PAYMENT AGREEMENT**\n\n` +
-  `By signing this agreement, the undersigned party acknowledges and agrees to the following terms:\n\n` +
-  `1. An initial payment of **$7.40** is due upon signing this agreement.\n` +
-  `2. The remaining balance shall be paid in full no later than **June 11, 2026**.\n` +
-  `3. Failure to complete the remaining payment by the due date may result in further action.\n\n` +
-  `This agreement is entered into voluntarily and constitutes a binding commitment between the parties.`;
+ function createAgreementText(price, dueDate) {
+  return (
+    `**PAYMENT AGREEMENT**\n\n` +
+    `By signing this agreement, the undersigned party acknowledges and agrees to the following terms:\n\n` +
+    `1. An initial payment of **${price}** is due upon signing this agreement.\n` +
+    `2. The remaining balance shall be paid in full no later than **${dueDate}**.\n` +
+    `3. Failure to complete the remaining payment by the due date may result in further action.\n\n` +
+    `This agreement is entered into voluntarily and constitutes a binding commitment between the parties.`
+  );
+}
 
 function loadAgreements() {
   try {
@@ -115,11 +119,24 @@ const commands = [
     .addStringOption((o) => o.setName("message").setDescription("The message to send.").setRequired(true).setMaxLength(1900))
     .toJSON(),
   new SlashCommandBuilder()
-    .setName("agree")
-    .setDescription("View and sign the payment agreement.")
-    .setIntegrationTypes([0, 1])
-    .setContexts([0, 1, 2])
-    .toJSON(),
+   new SlashCommandBuilder()
+  .setName("agree")
+  .setDescription("Create a custom payment agreement.")
+  .addStringOption((o) =>
+    o
+      .setName("price")
+      .setDescription("Payment amount")
+      .setRequired(true)
+  )
+  .addStringOption((o) =>
+    o
+      .setName("date")
+      .setDescription("Due date")
+      .setRequired(true)
+  )
+  .setIntegrationTypes([0, 1])
+  .setContexts([0, 1, 2])
+  .toJSON(),
 ];
 
 client.once(Events.ClientReady, async (readyClient) => {
@@ -164,17 +181,30 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 
     if (interaction.commandName === "agree") {
-      const embed = new EmbedBuilder()
-        .setTitle("Payment Agreement").setColor(0xfee75c)
-        .setDescription(AGREEMENT_TEXT)
-        .setFooter({ text: "Click the button below to sign this agreement." })
-        .setTimestamp();
-      const row = new ActionRowBuilder().addComponents(
-        new ButtonBuilder().setCustomId("p_sign_agreement").setLabel("Sign Agreement").setStyle(ButtonStyle.Success).setEmoji("✍️")
-      );
-      await interaction.reply({ embeds: [embed], components: [row], ephemeral: false });
-    }
-    return;
+  const price = interaction.options.getString("price");
+  const dueDate = interaction.options.getString("date");
+
+  const embed = new EmbedBuilder()
+    .setTitle("Payment Agreement")
+    .setColor(0xfee75c)
+    .setDescription(createAgreementText(price, dueDate))
+    .setFooter({ text: "Click the button below to sign this agreement." })
+    .setTimestamp();
+
+  const row = new ActionRowBuilder().addComponents(
+    new ButtonBuilder()
+      .setCustomId("p_sign_agreement")
+      .setLabel("Sign Agreement")
+      .setStyle(ButtonStyle.Success)
+      .setEmoji("✍️")
+  );
+
+  await interaction.reply({
+    embeds: [embed],
+    components: [row],
+    ephemeral: false,
+  });
+}
   }
   if (interaction.isButton()) { await handleButton(interaction); return; }
   if (interaction.isModalSubmit()) { await handleModal(interaction); }
