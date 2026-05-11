@@ -120,6 +120,17 @@ const commands = [
     .toJSON(),
   new SlashCommandBuilder()
    new SlashCommandBuilder()
+ const commands = [
+  new SlashCommandBuilder().setName("panel").setDescription("Open the bot control panel.").toJSON(),
+  new SlashCommandBuilder().setName("myperms").setDescription("Check what level of access you have in this bot.").toJSON(),
+  new SlashCommandBuilder()
+    .setName("reply")
+    .setDescription("Reply to someone who DM'd the bot (recipients only).")
+    .addStringOption((o) => o.setName("user_id").setDescription("The Discord User ID of the person to reply to.").setRequired(true))
+    .addStringOption((o) => o.setName("message").setDescription("The message to send.").setRequired(true).setMaxLength(1900))
+    .toJSON(),
+  new SlashCommandBuilder()
+   new SlashCommandBuilder()
   .setName("agree")
   .setDescription("Create a custom payment agreement.")
   .addStringOption((o) =>
