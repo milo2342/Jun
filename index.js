@@ -119,37 +119,24 @@ const commands = [
     .addStringOption((o) => o.setName("message").setDescription("The message to send.").setRequired(true).setMaxLength(1900))
     .toJSON(),
   new SlashCommandBuilder()
-   new SlashCommandBuilder()
- const commands = [
-  new SlashCommandBuilder().setName("panel").setDescription("Open the bot control panel.").toJSON(),
-  new SlashCommandBuilder().setName("myperms").setDescription("Check what level of access you have in this bot.").toJSON(),
-  new SlashCommandBuilder()
-    .setName("reply")
-    .setDescription("Reply to someone who DM'd the bot (recipients only).")
-    .addStringOption((o) => o.setName("user_id").setDescription("The Discord User ID of the person to reply to.").setRequired(true))
-    .addStringOption((o) => o.setName("message").setDescription("The message to send.").setRequired(true).setMaxLength(1900))
+    .setName("agree")
+    .setDescription("Create a custom payment agreement.")
+    .addStringOption((o) =>
+      o
+        .setName("price")
+        .setDescription("Payment amount")
+        .setRequired(true)
+    )
+    .addStringOption((o) =>
+      o
+        .setName("date")
+        .setDescription("Due date")
+        .setRequired(true)
+    )
+    .setIntegrationTypes([0, 1])
+    .setContexts([0, 1, 2])
     .toJSON(),
-  new SlashCommandBuilder()
-   new SlashCommandBuilder()
-  .setName("agree")
-  .setDescription("Create a custom payment agreement.")
-  .addStringOption((o) =>
-    o
-      .setName("price")
-      .setDescription("Payment amount")
-      .setRequired(true)
-  )
-  .addStringOption((o) =>
-    o
-      .setName("date")
-      .setDescription("Due date")
-      .setRequired(true)
-  )
-  .setIntegrationTypes([0, 1])
-  .setContexts([0, 1, 2])
-  .toJSON(),
 ];
-
 client.once(Events.ClientReady, async (readyClient) => {
   const clientId = readyClient.user.id;
   console.log(`Logged in as ${readyClient.user.tag} (ID: ${clientId})`);
