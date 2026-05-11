@@ -468,4 +468,4 @@ async function handleIncomingDM(message) {
   );
 }
 
-client.login(token);
+client.login();
